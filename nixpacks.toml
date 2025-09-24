@@ -4,16 +4,16 @@
 nixPkgs = ["...", "openssl"]
 
 [phases.install]
-# Entra al backend e instala dependencias
-cmd = "cd backend && npm ci"
+# Install workspace deps at the repo root
+cmd = "npm ci"
 
 [phases.build]
-# Entra al backend y ejecuta el build de railway
-cmd = "cd backend && npm run railway:build"
+# Build the backend using the workspace script (also builds admin when enabled)
+cmd = "npm run railway:build --workspace=backend"
 
 [start]
-# Entra al backend y ejecuta el start de railway
-cmd = "cd backend && npm run railway:start"
+# Start the backend service on the assigned PORT
+cmd = "npm run railway:start --workspace=backend"
 
 [env]
 NODE_ENV = "production"

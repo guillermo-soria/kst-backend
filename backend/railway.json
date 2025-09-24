@@ -2,13 +2,13 @@
   "$schema": "https://railway.app/railway.schema.json",
   "build": {
     "builder": "NIXPACKS",
-    "buildCommand": "npm run build --workspace=backend"
+    "buildCommand": "npm run railway:build --workspace=backend"
   },
   "deploy": {
     "numReplicas": 1,
     "sleepApplication": false,
     "restartPolicyType": "ON_FAILURE",
     "restartPolicyMaxRetries": 10,
-    "startCommand": "npm run start --workspace=backend"
+    "startCommand": "npm run railway:start --workspace=backend"
   }
 }

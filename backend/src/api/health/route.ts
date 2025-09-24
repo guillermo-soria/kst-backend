@@ -14,3 +14,6 @@ export const GET = (req: MedusaRequest, res: MedusaResponse) => {
     database: process.env.DATABASE_URL ? "connected" : "not configured"
   })
 }
+
+// Ensure health is always public
+export const AUTHENTICATE = false
