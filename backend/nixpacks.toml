@@ -1,9 +1,9 @@
-# Use nixpacks
+# Use nixpacks for Railway deployment
 [build]
-cmd = "npm run build"
+cmd = "npm run railway:build"
 
 [start]
-cmd = "npm run start"
+cmd = "npm run railway:start"
 
 [env]
 NODE_ENV = "production"
