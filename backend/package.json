@@ -36,7 +36,7 @@
     "@medusajs/auth-emailpass": "^2.10.3",
     "@medusajs/cli": "2.10.3",
     "@medusajs/framework": "2.10.3",
-    "medusa": "^2.8.0",
+    "@medusajs/medusa": "2.10.3",
     "@medusajs/cache-redis": "^2.10.3",
     "@medusajs/event-bus-redis": "^2.10.3",
     "@medusajs/workflow-engine-redis": "^2.10.3",

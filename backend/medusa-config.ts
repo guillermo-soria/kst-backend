@@ -1,4 +1,4 @@
-import { defineConfig } from "@medusajs/framework/config"
+import { defineConfig } from "@medusajs/medusa"
 
 const boolFromEnv = (val?: string, fallback = false) =>
   typeof val === "string" ? val === "true" : fallback
