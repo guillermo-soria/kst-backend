@@ -90,7 +90,8 @@ npm run build:frontend # Build frontend for production
 - **Epic 1**: Backend deployment preparation (Railway ready)
 
 ### 🚧 Current Focus  
-- **Epic 2**: Mercado Pago payment integration
+- **Epic 3**: Frontend development (Homepage & store básico)
+- **Epic 2**: Mercado Pago payment integration (después)
 
 ### 📅 Upcoming
 - **Epic 3**: Frontend store development and Cloudflare deployment

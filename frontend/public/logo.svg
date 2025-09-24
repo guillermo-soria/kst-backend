@@ -1,0 +1,23 @@
+<svg width="40" height="40" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+  <!-- Fondo circular negro -->
+  <circle cx="50" cy="50" r="48" fill="#000000" stroke="#00FF00" stroke-width="2"/>
+  
+  <!-- Texto "KST" estilizado -->
+  <text x="50" y="35" text-anchor="middle" fill="#00FF00" font-family="Arial Black" font-size="18" font-weight="900">KST</text>
+  
+  <!-- Camiseta simplificada -->
+  <path d="M30 45 L70 45 L68 65 L32 65 Z" fill="#FF00FF" stroke="#00FF00" stroke-width="1"/>
+  <rect x="35" y="50" width="30" height="2" fill="#00FF00"/>
+  <rect x="38" y="55" width="24" height="2" fill="#00FF00"/>
+  
+  <!-- Efecto de brillo -->
+  <circle cx="50" cy="50" r="46" fill="none" stroke="url(#neonGlow)" stroke-width="1" opacity="0.7"/>
+  
+  <defs>
+    <linearGradient id="neonGlow" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#00FF00;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#FF00FF;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#FF1493;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+</svg>

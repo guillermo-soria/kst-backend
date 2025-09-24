@@ -1,18 +1,34 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# KST Store - Frontend
 
-## Getting Started
+Modern e-commerce frontend built with Next.js 14, TypeScript, and Tailwind CSS.
 
-First, run the development server:
+## 🚀 Features
 
+- **Modern UI/UX**: Clean, professional design with responsive layout
+- **Product Catalog**: Grid-based product display with detailed cards
+- **Navigation**: Seamless navigation between pages with active state indication
+- **Contact Form**: Professional contact page with business information
+- **Component Architecture**: Reusable components (Header, Footer, ProductCard)
+- **TypeScript**: Full type safety throughout the application
+- **Tailwind CSS**: Utility-first CSS framework for rapid styling
+
+## 🛠️ Development
+
+### Prerequisites
+- Node.js 18+ 
+- npm or yarn
+
+### Installation
+```bash
+cd frontend
+npm install
+```
+
+### Development Server
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
+The app will be available at `http://localhost:3000` (or `http://localhost:3002` if 3000 is taken).
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
