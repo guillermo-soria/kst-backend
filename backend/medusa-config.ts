@@ -25,7 +25,7 @@ export default defineConfig({
   },
 
   admin: {
-    disable: process.env.DISABLE_MEDUSA_ADMIN === "true",
+    disable: true,
   },
 
   // módulos en objeto (v2)
