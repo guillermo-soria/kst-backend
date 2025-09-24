@@ -52,14 +52,14 @@ export default defineConfig({
           options: {},
         },
 
-    // WORKFLOWS → **clave**: algunas versiones esperan `redis: { url }`
+    // WORKFLOWS → Unificado para usar redisUrl como otros módulos
     ...(hasRedis
       ? {
           workflows: {
             resolve: "@medusajs/workflow-engine-redis",
-            options: { redis: { url: process.env.REDIS_URL! } },
-            // Si tu versión esperara `redisUrl`, cambia la línea de arriba por:
-            // options: { redisUrl: process.env.REDIS_URL }
+            options: {
+              redisUrl: process.env.REDIS_URL,
+            },
           },
         }
       : {}),
