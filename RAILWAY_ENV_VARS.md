@@ -21,13 +21,48 @@ AUTH_CORS=https://medusa-starter-default-production-ec61.up.railway.app
 # Base de datos (copiar desde PostgreSQL)
 DATABASE_URL=postgresql://postgres:xbStCVxwGoWTwPPLJWpBjyPSJISiGeTK@postgres.railway.internal:5432/railway
 
-# Redis (SE CREA AUTOMÁTICAMENTE cuando agregas Redis service)
-REDIS_URL=redis://default:password@redis.railway.internal:6379
+# Redis (USAR EL VALOR EXACTO DE RAILWAY)
+REDIS_URL=redis://default:[PASSWORD]@[REDIS_HOST]:6379
 ```
 
-## 🚨 PASOS PARA ARREGLAR EL ERROR ACTUAL:
+## 🚨 PASOS CRÍTICOS PARA ARREGLAR REDIS:
 
-### **PASO 1: Agregar Redis a Railway**
+### **PROBLEMA ACTUAL:**
+```
+Error: getaddrinfo ENOTFOUND redis-g6xi.railway.internal
+Cannot destructure property 'url' of 'redisConnectionUrl'
+```
+
+### **SOLUCIÓN:**
+
+### **PASO 1: Verificar Redis Service**
+1. Ve a tu proyecto Railway
+2. Verifica que tienes un servicio Redis activo
+3. Si no existe, agrega: "Add Service" → "Database" → "Redis"
+
+### **PASO 2: Obtener REDIS_URL Correcto**
+1. En Railway, ve al servicio Redis
+2. Ve a la pestaña "Variables"
+3. Copia el valor EXACTO de `REDIS_URL`
+4. Debería verse así: `redis://default:[password]@[internal-host]:6379`
+
+### **PASO 3: Actualizar Variables Backend**
+1. Ve al servicio Backend en Railway
+2. Ve a "Variables"
+3. Actualiza `REDIS_URL` con el valor EXACTO del Redis service
+4. **IMPORTANTE:** NO modifiques la URL, úsala tal como la proporciona Railway
+
+### **PASO 4: Agregar Variable Faltante**
+1. En el servicio Backend, agrega:
+   ```
+   PORT=9000
+   ```
+2. Esta variable es CRÍTICA para que el server use el puerto correcto
+
+### **PASO 5: Redeploy**
+1. Haz redeploy del backend service
+2. Verifica que no hay más errores de Redis
+3. Verifica que el server inicia correctamente en puerto 9000
 1. Ve a https://railway.app/dashboard
 2. Abre tu proyecto `kst-backend`
 3. Click en **"New Service"** o botón **"+"**
@@ -155,6 +190,58 @@ Make sure to run 'medusa build' before starting the server.
 2. Click "Add Service" → "Database" → "Redis"
 3. Railway will automatically provide `REDIS_URL` environment variable
 4. This fixes memory leak issues by using persistent Redis storage
+
+## 🔧 REDIS CONNECTION FIX (2024-12-20 02:15)
+
+### **Current Error Analysis:**
+```
+Error: getaddrinfo ENOTFOUND redis-g6xi.railway.internal
+    at __node_internal_run_before_shutdown_callback
+    at process.processImmediate
+```
+
+### **Root Cause:**
+1. ❌ Redis URL format is incorrect or incomplete
+2. ❌ PORT variable missing causing wrong port binding
+3. ❌ Redis service might not be properly linked
+
+### **Complete Fix Steps:**
+
+#### **1. Fix Redis URL**
+```bash
+# In Railway Backend Variables, set EXACTLY as provided by Redis service:
+REDIS_URL=redis://default:[actual-password]@[actual-internal-host]:6379
+```
+
+#### **2. Add Missing PORT**
+```bash
+PORT=9000
+```
+
+#### **3. Verify All Required Variables:**
+```bash
+DATABASE_URL=postgresql://... (from PostgreSQL service)
+REDIS_URL=redis://... (from Redis service - USE EXACT VALUE)
+PORT=9000
+NODE_ENV=production
+DISABLE_MEDUSA_ADMIN=true
+JWT_SECRET=[generated-secret]
+COOKIE_SECRET=[generated-secret]
+SESSION_SECRET=[generated-secret]
+STORE_CORS=*
+ADMIN_CORS=*
+AUTH_CORS=*
+```
+
+#### **4. Debug Commands After Deploy:**
+```bash
+# Check if Redis is reachable
+curl https://[your-app].railway.app/health
+
+# Check logs for Redis connection
+# Look for: "Redis connected successfully" (should appear)
+# Should NOT see: "ENOTFOUND" or "Using in-memory fallback"
+```
 
 ## ⚡ MEMORY FIX - Admin UI Disabled (2024-12-20 01:55)
 

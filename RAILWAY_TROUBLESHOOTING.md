@@ -1,30 +1,59 @@
 # 🔧 Railway Deployment Troubleshooting
 
+## 🚨 CURRENT CRITICAL ISSUE (2024-12-20 02:20)
+
+### **REDIS CONNECTION FAILURE**
+
+**Error**:
+```
+Error: getaddrinfo ENOTFOUND redis-g6xi.railway.internal
+Cannot destructure property 'url' of 'redisConnectionUrl' as it is undefined
+```
+
+**Root Cause**:
+1. ❌ Incorrect Redis URL format in environment variables
+2. ❌ Missing `PORT=9000` variable
+3. ❌ Redis service not properly linked to backend
+
+**SOLUTION**:
+
+#### **Step 1: Get Correct Redis URL**
+1. Go to Railway → Redis Service → Variables
+2. Copy the EXACT `REDIS_URL` value (should look like):
+   ```
+   redis://default:[long-password]@[internal-host].railway.internal:6379
+   ```
+
+#### **Step 2: Update Backend Variables**
+1. Go to Railway → Backend Service → Variables
+2. Update/Add these variables:
+   ```bash
+   REDIS_URL=[paste-exact-value-from-redis-service]
+   PORT=9000
+   ```
+
+#### **Step 3: Redeploy**
+1. Click "Redeploy" in backend service
+2. Monitor logs for successful connection
+
 ## Common Issues and Solutions
 
-### Issue 1: Backend Still Not Starting After Adding Redis
+### Issue 1: Redis URL Format Issues
 
 **Symptoms**:
-- Deployment fails even after adding Redis service
-- Still seeing Redis connection errors
+- `ENOTFOUND` DNS errors
+- `Cannot destructure property 'url'` errors
+- Backend fails to start
 
 **Solutions**:
-1. **Check Redis URL format**:
-   ```bash
-   # Should look like this:
-   REDIS_URL=redis://default:password@redis.railway.internal:6379
-   ```
+1. **Use EXACT Redis URL from Railway**:
+   - Never modify the Redis URL manually
+   - Use the exact value provided by Railway Redis service
+   - Format: `redis://default:[password]@[host].railway.internal:6379`
 
-2. **Verify Redis service is running**:
-   - Go to Railway dashboard
-   - Check Redis service status (should be green/running)
-   - If failed, try restarting Redis service
-
-3. **Manual redeploy**:
-   ```bash
-   # In Railway dashboard:
-   # Go to your backend service → Deployments → "Redeploy"
-   ```
+2. **Verify Redis service connection**:
+   - Redis service must be in same Railway project
+   - Backend service must have access to Redis service variables
 
 ### Issue 2: Port/CORS Errors
 

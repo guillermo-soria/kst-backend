@@ -1,4 +1,96 @@
-# 🚀 Railway Deployment - Final Steps
+# ## Current Status: � F## 🔧 STEP-BY-STEP FIX
+
+### **1. Fix Redis URL (CRITICAL)**
+1. Go to Railway project → Redis service → Variables
+2. Copy the EXACT value of `REDIS_URL` 
+3. Go to Backend service → Variables
+4. Update `REDIS_URL` with the EXACT copied value
+5. **Do NOT modify the URL format**
+
+### **2. Add Missing PORT Variable**
+1. In Backend service → Variables → Add New Variable:
+   ```
+   PORT=9000
+   ```
+
+### **3. Verify All Required Variables:**
+```bash
+# Critical Variables (MUST BE SET):
+DATABASE_URL=postgresql://... (auto-generated)
+REDIS_URL=redis://default:[password]@[host]:6379 (from Redis service)
+PORT=9000
+NODE_ENV=production
+DISABLE_MEDUSA_ADMIN=true
+
+# Security (already set):
+JWT_SECRET=[generated-secure-secret]
+COOKIE_SECRET=[generated-secure-secret]
+SESSION_SECRET=[generated-secure-secret]
+
+# CORS (can be * for now):
+STORE_CORS=*
+ADMIN_CORS=*
+AUTH_CORS=*
+```
+
+### **4. Force Redeploy**
+1. Save all variables
+2. Go to Deployments → Click "Redeploy"
+3. Watch logs for successful Redis connection
+
+## ✅ SUCCESS INDICATORS
+
+### **Expected Successful Logs:**
+```
+✅ Database migrations completed
+✅ Redis connected successfully
+✅ Workflows module initialized with Redis
+✅ Cache module using Redis
+✅ EventBus using Redis
+✅ Server started on port 9000
+✅ Health endpoints available
+```
+
+### **What Should NOT Appear:**
+```
+❌ ENOTFOUND redis-g6xi.railway.internal
+❌ Cannot destructure property 'url'
+❌ Using in-memory cache (fallback)
+❌ Workflows using in-memory storage
+❌ Server started on port 8080
+```
+
+## 🌐 VERIFICATION STEPS
+
+### **1. Health Check:**
+```bash
+curl https://[your-backend-url].railway.app/health
+# Should return: {"status":"ok"}
+```
+
+### **2. Admin Health Check:**
+```bash
+curl https://[your-backend-url].railway.app/admin/health  
+# Should return: {"status":"ok"}
+```
+
+### **3. Store Health Check:**
+```bash
+curl https://[your-backend-url].railway.app/store/health
+# Should return: {"status":"ok"}
+```CTION ERRORS
+
+**ISSUE IDENTIFIED**: Backend failing to connect to Redis service
+**ERROR**: `ENOTFOUND redis-g6xi.railway.internal`
+
+## 🚨 CRITICAL FIX REQUIRED
+
+### **Problem Analysis:**
+1. ❌ Redis URL format issue causing DNS resolution failure
+2. ❌ Missing `PORT=9000` variable 
+3. ❌ Workflows module unable to initialize with Redis
+
+### **IMMEDIATE ACTION REQUIRED:**y Deployment - Final Steps
 
 ## Current Status: ✅ REDIS ADDED - READY TO DEPLOY!
 
@@ -34,14 +126,21 @@ Your backend should be deploying automatically now that Redis is available.
 
 Tu Redis URL es: `redis://default:nDtcklGPENAmZuINYwCGAYNbMrWhqOZq@redis-g6xi.railway.internal:6379`
 
-**PASOS INMEDIATOS**:
-1. **Ve a Backend service** → **Variables**
-2. **Agrega/Modifica estas variables**:
+**🚨 PROBLEMA: REDIS_URL NO SE GUARDÓ CORRECTAMENTE**
+
+Los logs muestran que sigue buscando `redis-g6xi.railway.internal` = La variable NO se cambió.
+
+**VERIFICACIÓN URGENTE**:
+1. **Ve a Backend service** → **Variables** tab
+2. **Verifica que `REDIS_URL` tenga EXACTAMENTE**:
    ```
-   PORT=9000
    REDIS_URL=redis://default:nDtcklGPENAmZuINYwCGAYNbMrWhqOZq@redis-g6xi.railway.internal:6379
    ```
-3. **Guarda cambios** → Railway redesplegará automáticamente
+3. **NO debe tener `${{...}}`** 
+4. **Agrega también**: `PORT=9000`
+5. **GUARDA y espera el redeploy**
+
+**IMPORTANTE**: Si la variable sigue con `${{...}}`, BÓRRALA completamente y créala nueva.
 
 ### Step 2: Watch Backend Deployment
 Check your Railway dashboard - the backend should be redeploying now that Redis is available!
