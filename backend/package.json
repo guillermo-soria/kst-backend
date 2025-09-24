@@ -21,7 +21,7 @@
     "migrate": "medusa migrations run",
     "migrate:generate": "medusa migrations generate",
     "db:create": "medusa db:create",
-    "db:migrate": "medusa db:migrate", 
+    "db:migrate": "medusa db:migrate",
     "db:seed": "npm run seed",
     "railway:build": "echo 'Skipping admin build for Railway memory constraints'",
     "railway:start": "npm run db:migrate && medusa start -p $PORT",
@@ -34,6 +34,8 @@
   },
   "dependencies": {
     "@medusajs/admin-sdk": "2.10.3",
+    "@medusajs/auth": "^2.10.3",
+    "@medusajs/auth-emailpass": "^2.10.3",
     "@medusajs/cli": "2.10.3",
     "@medusajs/framework": "2.10.3",
     "@medusajs/medusa": "2.10.3",

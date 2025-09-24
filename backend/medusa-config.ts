@@ -4,7 +4,7 @@ import { loadEnv, defineConfig } from "@medusajs/framework/utils"
 loadEnv(process.env.NODE_ENV || "development", process.cwd())
 
 const isProduction = process.env.NODE_ENV === "production"
-const hasRedis = process.env.REDIS_URL
+const hasRedis = Boolean(process.env.REDIS_URL)
 
 export default defineConfig({
   projectConfig: {
@@ -63,5 +63,19 @@ export default defineConfig({
           },
         }
       : {}),
+
+    // AUTH → Configuración del módulo de autenticación
+    auth: {
+      resolve: "@medusajs/auth",
+      options: {
+        providers: [
+          {
+            resolve: "@medusajs/auth-emailpass",
+            id: "emailpass",
+            options: {},
+          },
+        ],
+      },
+    },
   },
 })

@@ -19,6 +19,10 @@
     "start:frontend": "npm run start --workspace=frontend",
     "railway:start": "cd backend && npm run railway:start",
     "db:migrate": "cd backend && npm run db:migrate",
+    "admin:check": "node check-admin.js",
+    "admin:complete": "node complete-admin.js",
+    "admin:verify": "node scripts/verify-admin-complete.js",
+    "admin:test": "node test-admin-login.js",
     "test": "npm run test --workspace=backend && npm run test --workspace=frontend",
     "lint": "npm run lint --workspace=backend && npm run lint --workspace=frontend",
     "clean": "rm -rf node_modules backend/node_modules frontend/node_modules",
@@ -48,6 +52,9 @@
     "@medusajs/cache-redis": "^2.10.3",
     "@medusajs/event-bus-redis": "^2.10.3",
     "@medusajs/workflow-engine-redis": "^2.10.3",
-    "ioredis": "^5.8.0"
+    "bcryptjs": "^3.0.2",
+    "ioredis": "^5.8.0",
+    "node-fetch": "^2.7.0",
+    "pg": "^8.16.3"
   }
 }
