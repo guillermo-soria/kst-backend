@@ -52,17 +52,18 @@ export default defineConfig({
           options: {},
         },
 
-    // WORKFLOWS → Unificado para usar redisUrl como otros módulos
-    ...(hasRedis
+    // WORKFLOWS → Redis cuando hay REDIS_URL, sino usar workflow engine in-memory
+    workflows: hasRedis
       ? {
-          workflows: {
-            resolve: "@medusajs/workflow-engine-redis",
-            options: {
-              redisUrl: process.env.REDIS_URL,
-            },
+          resolve: "@medusajs/workflow-engine-redis",
+          options: {
+            redisUrl: process.env.REDIS_URL,
           },
         }
-      : {}),
+      : {
+          resolve: "@medusajs/medusa/workflow-engine-inmemory",
+          options: {},
+        },
 
     // AUTH → Configuración del módulo de autenticación
     auth: {
