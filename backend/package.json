@@ -14,6 +14,7 @@
   ],
   "scripts": {
     "build": "medusa build",
+    "build:production": "NODE_OPTIONS='--max-old-space-size=1024' medusa build",
     "seed": "medusa exec ./src/scripts/seed.ts",
     "start": "medusa start",
     "dev": "medusa develop",
@@ -23,7 +24,7 @@
     "db:migrate": "medusa db:migrate", 
     "db:seed": "npm run seed",
     "railway:build": "npm run build",
-    "railway:start": "npm run build && npm run db:migrate && npm run start",
+    "railway:start": "npm run db:migrate && npm run start",
     "health": "curl -f http://localhost:9000/health || exit 1",
     "lint": "echo 'Backend: No linting configured'",
     "test": "npm run test:unit",
