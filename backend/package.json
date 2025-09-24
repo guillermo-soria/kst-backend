@@ -23,7 +23,7 @@
     "db:create": "medusa db:create",
     "db:migrate": "medusa db:migrate",
     "db:seed": "npm run seed",
-    "railway:build": "echo 'Skipping admin build for Railway memory constraints'",
+    "railway:build": "NODE_OPTIONS='--max-old-space-size=1024' medusa build",
     "railway:start": "npm run db:migrate && medusa start -p $PORT",
     "health": "curl -f http://localhost:9000/health || exit 1",
     "lint": "echo 'Backend: No linting configured'",
