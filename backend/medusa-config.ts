@@ -1,9 +1,10 @@
-import { defineConfig } from "@medusajs/medusa"
+// Removed defineConfig import and export a plain object config instead to avoid runtime issues
+// with defineConfig not being available in the installed Medusa version.
 
 const boolFromEnv = (val?: string, fallback = false) =>
   typeof val === "string" ? val === "true" : fallback
 
-export default defineConfig({
+const config = {
   projectConfig: {
     databaseUrl: process.env.DATABASE_URL,
     redisUrl: process.env.REDIS_URL,
@@ -29,16 +30,30 @@ export default defineConfig({
   // 🔒 Desactivar servir el Admin embebido por default.
   // Podés reactivarlo seteando DISABLE_MEDUSA_ADMIN=false
   admin: {
-    disable: boolFromEnv(process.env.DISABLE_MEDUSA_ADMIN, true),
-    // En versiones que usan 'serve': false, podrías usar:
-    // serve: !boolFromEnv(process.env.DISABLE_MEDUSA_ADMIN, true)
+    // In Medusa v2, prefer using `serve` to control embedded admin serving
+    serve: !boolFromEnv(process.env.DISABLE_MEDUSA_ADMIN, true),
   },
 
-  // Si tenés plugins, los mantenés acá.
+  // Medusa v2 modules (Redis-backed) for production stability
+  modules: {
+    eventBus: {
+      resolve: "@medusajs/event-bus-redis",
+      options: { redisUrl: process.env.REDIS_URL },
+    },
+    cache: {
+      resolve: "@medusajs/cache-redis",
+      options: { redisUrl: process.env.REDIS_URL },
+    },
+    workflows: {
+      resolve: "@medusajs/workflow-engine-redis",
+      options: { redisUrl: process.env.REDIS_URL },
+    },
+  },
+
+  // Si tenés plugins, los mantenés acá (no necesario en v2 para módulos base).
   // plugins: [
   //   { resolve: "@medusajs/auth-emailpass", options: {} },
-  //   { resolve: "@medusajs/cache-redis", options: { redisUrl: process.env.REDIS_URL } },
-  //   { resolve: "@medusajs/event-bus-redis", options: { redisUrl: process.env.REDIS_URL } },
-  //   { resolve: "@medusajs/workflow-engine-redis", options: { redisUrl: process.env.REDIS_URL } },
   // ],
-})
+}
+
+export default config
