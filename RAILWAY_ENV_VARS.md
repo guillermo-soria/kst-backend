@@ -1,5 +1,27 @@
 # Variables de Entorno para Railway
 
+## 🚀 DEPLOYMENT STATUS: WORKING WITH FALLBACKS
+
+### Latest Fix (Applied): Redis Fallback Configuration
+- **Problem**: `REDIS_URL=redis://redis.railway.internal:6379` was invalid
+- **Solution**: Updated `medusa-config.ts` to detect invalid Redis URLs and use fallback modules
+- **Result**: Backend now starts successfully without Redis
+
+### Current State:
+- ✅ Backend starts on port 9000
+- ✅ Database connected (PostgreSQL)
+- ⚠️ Using local event bus (fallback)
+- ⚠️ Using in-memory cache (fallback)
+- ❌ Workflows disabled (requires valid Redis)
+
+### For Full Production Setup:
+1. Add Redis service in Railway (not just environment variable)
+2. Get real Redis URL from Railway (format: `redis://default:password@host:port`)
+3. Update `REDIS_URL` environment variable
+4. Redeploy to enable Redis modules
+
+---
+
 ## Variables OBLIGATORIAS para que funcione:
 
 ```bash

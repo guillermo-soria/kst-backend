@@ -4,13 +4,18 @@ import { loadEnv, defineConfig } from "@medusajs/framework/utils"
 loadEnv(process.env.NODE_ENV || "development", process.cwd())
 
 const isProduction = process.env.NODE_ENV === "production"
-const hasRedis = Boolean(process.env.REDIS_URL)
+// Check if Redis URL is valid (not just exists, but is a valid URL)
+const hasValidRedis = Boolean(
+  process.env.REDIS_URL && 
+  process.env.REDIS_URL !== "redis://redis.railway.internal:6379" &&
+  process.env.REDIS_URL.startsWith("redis://")
+)
 
 export default defineConfig({
   projectConfig: {
     databaseUrl: process.env.DATABASE_URL,
-    // opcional: muchas partes ya toman Redis desde modules abajo
-    redisUrl: process.env.REDIS_URL,
+    // Only set redisUrl if we have a valid Redis URL
+    ...(hasValidRedis && { redisUrl: process.env.REDIS_URL }),
 
     http: {
       storeCors: process.env.STORE_CORS!,
@@ -34,7 +39,7 @@ export default defineConfig({
   // ⚠️ En v2 conviene declarar los módulos como objeto (no arreglo)
   modules: {
     // Event Bus
-    eventBus: hasRedis
+    eventBus: hasValidRedis
       ? {
           resolve: "@medusajs/event-bus-redis",
           options: { redisUrl: process.env.REDIS_URL },
@@ -46,7 +51,7 @@ export default defineConfig({
         },
 
     // Cache
-    cache: hasRedis
+    cache: hasValidRedis
       ? {
           resolve: "@medusajs/cache-redis",
           options: { redisUrl: process.env.REDIS_URL },
@@ -58,7 +63,7 @@ export default defineConfig({
         },
 
     // Workflows (recomendado Redis en prod)
-    ...(hasRedis
+    ...(hasValidRedis
       ? {
           workflows: {
             resolve: "@medusajs/workflow-engine-redis",
