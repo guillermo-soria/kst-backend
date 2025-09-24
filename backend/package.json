@@ -22,7 +22,7 @@
     "db:migrate": "medusa db:migrate",
     "db:seed": "npm run seed",
     "railway:build": "NODE_OPTIONS='--max-old-space-size=1024' medusa build --admin",
-    "railway:start": "medusa db:migrate && medusa start",
+    "railway:start": "if [ ! -f .medusa/admin/index.html ]; then echo 'Admin build not found, copying from client...'; mkdir -p .medusa/admin && cp -r .medusa/client/* .medusa/admin/ 2>/dev/null || echo 'No client build to copy'; fi; medusa db:migrate && medusa start",
     "health": "curl -f http://localhost:9000/health || exit 1",
     "lint": "echo 'Backend: No linting configured'",
     "test": "npm run test:unit",
