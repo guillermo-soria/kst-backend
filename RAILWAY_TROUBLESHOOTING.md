@@ -2,39 +2,69 @@
 
 ## 🚨 CURRENT CRITICAL ISSUE (2024-12-20 02:20)
 
-### **REDIS CONNECTION FAILURE**
+### **🔴 CRITICAL: REDIS CONNECTION FAILURE (DNS ERROR)**
 
-**Error**:
+**Current Error in Logs**:
 ```
 Error: getaddrinfo ENOTFOUND redis-g6xi.railway.internal
 Cannot destructure property 'url' of 'redisConnectionUrl' as it is undefined
+[wrn] Local Event Bus installed. This is not recommended for production.
+Module initialization failed: EventBusService
 ```
 
 **Root Cause**:
-1. ❌ Incorrect Redis URL format in environment variables
-2. ❌ Missing `PORT=9000` variable
-3. ❌ Redis service not properly linked to backend
+The `REDIS_URL` environment variable contains an **invalid/outdated hostname** (`redis-g6xi.railway.internal`) that cannot be resolved. This forces Medusa to use local fallbacks instead of Redis.
 
-**SOLUTION**:
+**🚨 URGENT SOLUTION (Follow Exactly)**:
 
-#### **Step 1: Get Correct Redis URL**
-1. Go to Railway → Redis Service → Variables
-2. Copy the EXACT `REDIS_URL` value (should look like):
-   ```
-   redis://default:[long-password]@[internal-host].railway.internal:6379
-   ```
+#### **Step 1: Verify Redis Service Status**
+1. Go to [railway.app](https://railway.app) → Your Project
+2. Confirm you see: **Backend**, **PostgreSQL**, **Redis** services
+3. Redis service must show **"Active"** status (if stopped, deploy it first)
 
-#### **Step 2: Update Backend Variables**
-1. Go to Railway → Backend Service → Variables
-2. Update/Add these variables:
+#### **Step 2: Get NEW Redis URL** 
+1. **Click Redis Service** (database icon, NOT backend)
+2. Click **"Variables"** tab  
+3. Find `REDIS_URL` and **copy the COMPLETE value**
+4. Should look like: `redis://default:PASSWORD@redis-NEW.railway.internal:6379`
+5. **Critical**: Hostname should NOT be `redis-g6xi.railway.internal`
+
+#### **Step 3: Update Backend Service**
+1. **Click Backend Service**
+2. Click **"Variables"** tab
+3. Find `REDIS_URL` → Click **"Edit"**  
+4. **Paste the EXACT URL** from Step 2
+5. Ensure these variables exist:
    ```bash
-   REDIS_URL=[paste-exact-value-from-redis-service]
+   REDIS_URL=redis://default:ACTUAL_PASSWORD@CORRECT_HOST:6379
    PORT=9000
+   NODE_ENV=production
+   JWT_SECRET=kst-super-secret-jwt-key-2024-change-this-in-production
+   COOKIE_SECRET=kst-super-secret-cookie-key-2024-change-this-in-production
+   DATABASE_URL=postgresql://postgres:PASSWORD@postgres.railway.internal:5432/railway
    ```
 
-#### **Step 3: Redeploy**
-1. Click "Redeploy" in backend service
-2. Monitor logs for successful connection
+#### **Step 4: Force Redeploy & Verify**
+1. Click **"Deploy"** in Backend service
+2. Wait for build completion 
+3. Click **"View Logs"** and look for:
+   ```
+   ✅ SUCCESS INDICATORS:
+   - Redis connection successful
+   - EventBus (Redis) initialized  
+   - Cache (Redis) initialized
+   - Workflows (Redis) initialized
+   
+   ❌ FAIL INDICATORS:
+   - ENOTFOUND redis-g6xi
+   - Local Event Bus installed
+   - falling back to in-memory
+   ```
+
+#### **Step 5: Test Health Endpoints**
+Replace `YOUR_URL` with your actual backend URL:
+- `https://YOUR_URL.railway.app/health` → Should return `200 OK`
+- `https://YOUR_URL.railway.app/admin/health` → Should return `200 OK`
 
 ## Common Issues and Solutions
 
