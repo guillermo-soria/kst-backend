@@ -1,5 +1,5 @@
 {
-  "name": "kst-backend",
+  "name": "kst-backend-monorepo",
   "version": "1.0.0",
   "description": "KST E-commerce Platform - MedusaJS Backend + Next.js Frontend",
   "private": true,
