@@ -7,3 +7,5 @@ cmd = "npm run railway:start"
 
 [env]
 NODE_ENV = "production"
+MEDUSA_ADMIN_ONBOARDING_TYPE = "default"
+MEDUSA_ADMIN_ONBOARDING_NEXTJS_DIRECTORY = ""
