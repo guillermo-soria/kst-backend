@@ -17,8 +17,8 @@
     "start:backend": "npm run start --workspace=backend",
     "start:frontend": "npm run start --workspace=frontend",
 
-    "railway:build": "npm run build --workspace=backend",
-    "railway:start": "npm run start --workspace=backend",
+    "railway:build": "npm run railway:build --workspace=backend",
+    "railway:start": "npm run railway:start --workspace=backend",
 
     "db:migrate": "npm run db:migrate --workspace=backend",
     "test": "npm run test --workspace=backend && npm run test --workspace=frontend",
