@@ -1,33 +1,14 @@
 # Variables de Entorno para Railway
 
-## 🚀 DEPLOYMENT STATUS: WORKING WITH FALLBACKS
-
-### Latest Fix (Applied): Redis Fallback Configuration
-- **Problem**: `REDIS_URL=redis://redis.railway.internal:6379` was invalid
-- **Solution**: Updated `medusa-config.ts` to detect invalid Redis URLs and use fallback modules
-- **Result**: Backend now starts successfully without Redis
-
-### Current State:
-- ✅ Backend starts on port 9000
-- ✅ Database connected (PostgreSQL)
-- ⚠️ Using local event bus (fallback)
-- ⚠️ Using in-memory cache (fallback)
-- ❌ Workflows disabled (requires valid Redis)
-
-### For Full Production Setup:
-1. Add Redis service in Railway (not just environment variable)
-2. Get real Redis URL from Railway (format: `redis://default:password@host:port`)
-3. Update `REDIS_URL` environment variable
-4. Redeploy to enable Redis modules
-
----
-
 ## Variables OBLIGATORIAS para que funcione:
 
 ```bash
 # Secretos de seguridad (OBLIGATORIOS)
 JWT_SECRET=kst-super-secret-jwt-key-2024-change-this-in-production
 COOKIE_SECRET=kst-super-secret-cookie-key-2024-change-this-in-production
+
+# Puerto (OBLIGATORIO para Railway)
+PORT=9000
 
 # Entorno
 NODE_ENV=production
@@ -39,15 +20,30 @@ AUTH_CORS=https://medusa-starter-default-production-ec61.up.railway.app
 
 # Base de datos (copiar desde PostgreSQL)
 DATABASE_URL=postgresql://postgres:xbStCVxwGoWTwPPLJWpBjyPSJISiGeTK@postgres.railway.internal:5432/railway
+
+# Redis (SE CREA AUTOMÁTICAMENTE cuando agregas Redis service)
+REDIS_URL=redis://default:password@redis.railway.internal:6379
 ```
 
-## Cómo agregar en Railway:
+## 🚨 PASOS PARA ARREGLAR EL ERROR ACTUAL:
 
+### **PASO 1: Agregar Redis a Railway**
+1. Ve a https://railway.app/dashboard
+2. Abre tu proyecto `kst-backend`
+3. Click en **"New Service"** o botón **"+"**
+4. Selecciona **"Database" → "Redis"**
+5. Railway creará automáticamente la variable `REDIS_URL`
+
+### **PASO 2: Verificar Variables de Entorno**
 1. Ve a tu proyecto en Railway
 2. Click en Settings → Variables  
-3. Agrega cada variable una por una
-4. Click "Save" después de cada una
-5. Haz redeploy
+3. Verifica que estas variables existan:
+   - `PORT=9000`
+   - `REDIS_URL` (se crea automática con Redis)
+   - `JWT_SECRET` y `COOKIE_SECRET`
+   - `NODE_ENV=production`
+4. Si falta alguna, agrégala manualmente
+5. Haz redeploy después de agregar Redis
 
 ## Verificar que DATABASE_URL existe:
 - Debe aparecer automáticamente cuando agregues PostgreSQL
