@@ -55,12 +55,14 @@ DATABASE_URL=postgresql://postgres:xbStCVxwGoWTwPPLJWpBjyPSJISiGeTK@postgres.rai
 ```bash
 NODE_ENV=production
 PORT=9000
-JWT_SECRET=kst-super-secret-jwt-2024-change-me
-COOKIE_SECRET=kst-super-cookie-secret-2024-change-me
+JWT_SECRET=c5e61cfa9d20bb71fb2a02d17f03fc6109c19718bfddcc059bb300dfe5a46ba8e1789a5124aeddc39ea22a11dcf54623
+COOKIE_SECRET=0c663fd9200384745dff21729b9c87d0a22e0daaf4ab7979ee2787415b9c87f6b28d4c29a7fc66adf588d49fc04e644f
+SESSION_SECRET=bd8b717e898aa1951a9aa00b2088fb980e0ea2912ff663e8cb47b4f7f705e25c9bcdb57f032872056d324ba070a0c601
 STORE_CORS=https://medusa-starter-default-production-ec61.up.railway.app
 ADMIN_CORS=https://medusa-starter-default-production-ec61.up.railway.app
 AUTH_CORS=https://medusa-starter-default-production-ec61.up.railway.app
 DISABLE_MEDUSA_ADMIN=true
+REDIS_URL=redis://default:password@host:port
 ```
 
 **PASO 3:** Reemplaza `TU-DOMINIO-RAILWAY` con tu dominio real
@@ -113,15 +115,28 @@ Make sure to run 'medusa build' before starting the server.
 🔄 **DESPLEGANDO...** - Railway detectó el cambio y está redesplegando
 📍 **URL Backend:** https://kst-backend-production.up.railway.app
 
-## 🚨 CRITICAL: PORT Environment Variable Required
+## 🚨 CRITICAL: Required Environment Variables
 
-**YOU MUST ADD THIS ENVIRONMENT VARIABLE IN RAILWAY:**
+**THESE VARIABLES ARE REQUIRED IN RAILWAY:**
 
-```bash
-PORT=9000
-```
+### Core Configuration:
+- `PORT=9000` - Without this, server starts on wrong port!
+- `NODE_ENV=production` - Enables production optimizations
 
-**Without this, the server will start on port 8080 and Railway won't be able to connect!**
+### Security Secrets (GENERATED - USE THESE VALUES):
+- `JWT_SECRET` - For JWT token signing
+- `COOKIE_SECRET` - For cookie encryption  
+- `SESSION_SECRET` - For session management
+
+### Redis Configuration (CRITICAL for Memory Management):
+- `REDIS_URL` - **MUST ADD REDIS SERVICE** to prevent memory leaks
+- Without Redis, MedusaJS uses in-memory storage causing memory issues
+
+### Add Redis Service in Railway:
+1. Go to your Railway project
+2. Click "Add Service" → "Database" → "Redis"
+3. Railway will automatically provide `REDIS_URL` environment variable
+4. This fixes memory leak issues by using persistent Redis storage
 
 ## ⚡ MEMORY FIX - Admin UI Disabled (2024-12-20 01:55)
 

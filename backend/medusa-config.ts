@@ -1,46 +1,70 @@
-import { loadEnv, defineConfig } from '@medusajs/framework/utils'
+// medusa-config.ts
+import { loadEnv, defineConfig } from "@medusajs/framework/utils"
 
-loadEnv(process.env.NODE_ENV || 'development', process.cwd())
+loadEnv(process.env.NODE_ENV || "development", process.cwd())
 
-const isProduction = process.env.NODE_ENV === 'production'
+const isProduction = process.env.NODE_ENV === "production"
+const hasRedis = Boolean(process.env.REDIS_URL)
 
-module.exports = defineConfig({
+export default defineConfig({
   projectConfig: {
     databaseUrl: process.env.DATABASE_URL,
+    // opcional: muchas partes ya toman Redis desde modules abajo
     redisUrl: process.env.REDIS_URL,
+
     http: {
       storeCors: process.env.STORE_CORS!,
       adminCors: process.env.ADMIN_CORS!,
       authCors: process.env.AUTH_CORS!,
-      jwtSecret: process.env.JWT_SECRET || "supersecret",
-      cookieSecret: process.env.COOKIE_SECRET || "supersecret",
+      jwtSecret: process.env.JWT_SECRET!,
+      cookieSecret: process.env.COOKIE_SECRET!,
     },
-    // Production-specific settings
+
     ...(isProduction && {
-      workerMode: (process.env.MEDUSA_WORKER_MODE as "shared" | "worker" | "server") || 'shared'
-    })
+      workerMode:
+        (process.env.MEDUSA_WORKER_MODE as "shared" | "worker" | "server") ||
+        "shared",
+    }),
   },
+
   admin: {
     disable: process.env.DISABLE_MEDUSA_ADMIN === "true",
   },
-  modules: [
-    {
-      resolve: "@medusajs/medusa/cache-inmemory",
-      options: {
-        // Use Redis in production if available, fallback to in-memory
-        ...(process.env.REDIS_URL && { 
-          redisUrl: process.env.REDIS_URL 
-        })
-      }
-    },
-    {
-      resolve: "@medusajs/medusa/event-bus-local",
-      options: {
-        // Use Redis event bus in production if available
-        ...(process.env.REDIS_URL && { 
-          redisUrl: process.env.REDIS_URL 
-        })
-      }
-    }
-  ]
+
+  // ⚠️ En v2 conviene declarar los módulos como objeto (no arreglo)
+  modules: {
+    // Event Bus
+    eventBus: hasRedis
+      ? {
+          resolve: "@medusajs/event-bus-redis",
+          options: { redisUrl: process.env.REDIS_URL },
+        }
+      : {
+          // fallback dev
+          resolve: "@medusajs/medusa/event-bus-local",
+          options: {},
+        },
+
+    // Cache
+    cache: hasRedis
+      ? {
+          resolve: "@medusajs/cache-redis",
+          options: { redisUrl: process.env.REDIS_URL },
+        }
+      : {
+          // fallback dev
+          resolve: "@medusajs/medusa/cache-inmemory",
+          options: {},
+        },
+
+    // Workflows (recomendado Redis en prod)
+    ...(hasRedis
+      ? {
+          workflows: {
+            resolve: "@medusajs/workflow-engine-redis",
+            options: { redisUrl: process.env.REDIS_URL },
+          },
+        }
+      : {}),
+  },
 })

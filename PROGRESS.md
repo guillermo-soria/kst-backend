@@ -277,8 +277,14 @@ MedusaJS Admin UI build requires more memory than Railway's basic plan provides.
 📍 **SOLUTION**: Must manually add `PORT=9000` environment variable in Railway
 
 ### Action Required:
-1. **Add `PORT=9000` in Railway Variables** (CRITICAL!)
-2. **Add `DISABLE_MEDUSA_ADMIN=true` in Railway Variables** 
-3. **Redeploy** after adding both variables
+1. **Add Redis Service in Railway** (CRITICAL for memory management!)
+2. **Add all environment variables** (PORT, secrets, CORS, etc.)
+3. **Redeploy** after adding Redis and variables
 
-**Backend will work once PORT=9000 is added to Railway environment! 🚀**
+### Current Status:
+✅ **MedusaJS config updated** with proper Redis integration
+✅ **Security secrets generated** and ready for Railway
+🔄 **Need to add Redis service** to prevent memory leaks
+🔄 **Need to add all environment variables** to Railway
+
+**Backend will work once Redis service and all variables are added! 🚀**
