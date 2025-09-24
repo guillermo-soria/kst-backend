@@ -1,0 +1,26 @@
+# Use nixpacks for Railway deployment
+[build]
+cmd = "npm run railway:build"
+
+[start]
+cmd = "npm run railway:start"
+
+[phases.setup]
+nixPkgs = ["...", "openssl"]
+
+[env]
+NODE_ENV = "production"
+MEDUSA_ADMIN_ONBOARDING_TYPE = "default"
+MEDUSA_ADMIN_ONBOARDING_NEXTJS_DIRECTORY = ""
+
+[phases.install]
+# Entra al backend e instala dependencias
+cmd = "cd backend && npm ci"
+
+[phases.build]
+# Entra al backend y ejecuta el build de railway
+cmd = "cd backend && npm run railway:build"
+
+[start]
+# Entra al backend y ejecuta el start de railway
+cmd = "cd backend && npm run railway:start"
