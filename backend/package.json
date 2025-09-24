@@ -24,7 +24,7 @@
     "db:migrate": "medusa db:migrate", 
     "db:seed": "npm run seed",
     "railway:build": "echo 'Skipping admin build for Railway memory constraints'",
-    "railway:start": "npm run db:migrate && npm run start",
+    "railway:start": "npm run db:migrate && medusa start --port=${PORT:-9000}",
     "health": "curl -f http://localhost:9000/health || exit 1",
     "lint": "echo 'Backend: No linting configured'",
     "test": "npm run test:unit",
