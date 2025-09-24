@@ -5,6 +5,9 @@ cmd = "npm run railway:build"
 [start]
 cmd = "npm run railway:start"
 
+[phases.setup]
+nixPkgs = ["...", "openssl"]
+
 [env]
 NODE_ENV = "production"
 MEDUSA_ADMIN_ONBOARDING_TYPE = "default"
