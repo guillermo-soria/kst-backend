@@ -241,3 +241,54 @@ If everything breaks and you need to start fresh:
 ---
 
 **Remember**: 99% of Railway deployment issues are missing environment variables or services. Always check these first! 🚀
+
+## 🔴 CRITICAL: Monorepo Structure Causing Deployment Issues
+
+### **MONOREPO CONFIGURATION PROBLEM**
+
+**Root Cause**:
+Railway is trying to deploy from `/kst-backend/` (root) but your Medusa app is in `/kst-backend/backend/`. This creates multiple issues:
+
+1. **Wrong package.json**: Railway uses root `package.json` instead of `backend/package.json`
+2. **Missing scripts**: `railway:start` script is in `backend/package.json`, not root
+3. **Config conflicts**: Multiple `medusa-config.js` files causing confusion
+4. **Context issues**: Environment variables and Redis connections fail because of wrong working directory
+
+**Symptoms**:
+```
+❌ npm ERR! missing script: railway:start
+❌ Cannot find module 'medusa-config'
+❌ ENOTFOUND redis errors (wrong context)
+❌ Database connection issues
+```
+
+**🚨 IMMEDIATE SOLUTIONS**:
+
+### **Solution 1: Configure Railway Root Directory (PREFERRED)**
+1. Go to Railway Dashboard → Backend Service → **"Settings"**
+2. Find **"Root Directory"** or **"Source"** setting
+3. Set to: `backend` (without leading slash)
+4. Save and redeploy
+
+### **Solution 2: Use Proxy Scripts (BACKUP)**
+We've updated the root `package.json` with proxy scripts:
+```json
+{
+  "scripts": {
+    "build": "cd backend && npm run build",
+    "railway:start": "cd backend && npm run railway:start",
+    "db:migrate": "cd backend && npm run db:migrate"
+  }
+}
+```
+
+### **Solution 3: Clean Up Config Conflicts**
+Renamed conflicting files:
+- `medusa-config.js` → `medusa-config-OLD.js` 
+- `medusa-config-simple.js` → `medusa-config-simple-OLD.js`
+
+**Verification Steps**:
+1. Railway build logs should show: `Found package.json with railway:start`
+2. Should load `medusa-config.ts` from correct location
+3. Redis connection should work (correct context)
+4. Database migrations should run successfully
