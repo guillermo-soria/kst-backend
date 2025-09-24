@@ -41,5 +41,11 @@
     "mono-repo"
   ],
   "author": "KST Team",
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "@medusajs/cache-redis": "^2.10.3",
+    "@medusajs/event-bus-redis": "^2.10.3",
+    "@medusajs/workflow-engine-redis": "^2.10.3",
+    "ioredis": "^5.8.0"
+  }
 }
