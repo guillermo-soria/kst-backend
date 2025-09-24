@@ -16,7 +16,7 @@
     "build": "medusa build",
     "build:production": "NODE_OPTIONS='--max-old-space-size=1024' medusa build",
     "seed": "medusa exec ./src/scripts/seed.ts",
-    "start": "medusa start",
+    "start": "medusa start --port $PORT --skip-admin",
     "dev": "medusa develop",
     "db:create": "medusa db:create",
     "db:migrate": "medusa db:migrate",
