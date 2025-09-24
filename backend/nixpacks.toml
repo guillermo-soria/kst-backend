@@ -1,0 +1,9 @@
+# Use nixpacks
+[build]
+cmd = "npm run build"
+
+[start]
+cmd = "npm run start"
+
+[env]
+NODE_ENV = "production"
