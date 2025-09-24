@@ -22,7 +22,7 @@
     "db:migrate": "medusa db:migrate",
     "db:seed": "npm run seed",
     "railway:build": "medusa build",
-    "railway:start": "set -e; echo '--- STARTING DEPLOYMENT SCRIPT ---'; echo 'STEP 1: Ensuring admin build exists...'; if [ ! -f .medusa/admin/index.html ]; then echo 'Admin build NOT FOUND at .medusa/admin/index.html. Attempting to copy from .medusa/client...'; if [ -f .medusa/client/index.html ]; then rm -rf .medusa/admin && mkdir -p .medusa/admin && cp -a .medusa/client/. .medusa/admin/ && echo 'Copy successful.'; else echo 'FATAL: No admin build found in .medusa/client either. Build failed.'; exit 1; fi; fi; echo 'Final check: Verifying .medusa/admin/index.html...'; ls -la .medusa/admin/index.html; echo 'Pausing for 10 seconds before migrations to allow services to stabilize...'; sleep 10; echo 'STEP 2: Running database migrations...'; medusa db:migrate; echo 'Migrations finished. Waiting 5 seconds for connections to settle...'; sleep 5; echo 'STEP 3: Starting Medusa server...'; medusa start -p $PORT; echo '--- SCRIPT FINISHED ---';",
+    "railway:start": "medusa db:migrate && medusa start",
     "health": "curl -f http://localhost:9000/health || exit 1",
     "lint": "echo 'Backend: No linting configured'",
     "test": "npm run test:unit",
