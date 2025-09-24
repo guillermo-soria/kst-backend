@@ -54,6 +54,7 @@ DATABASE_URL=postgresql://postgres:xbStCVxwGoWTwPPLJWpBjyPSJISiGeTK@postgres.rai
 
 ```bash
 NODE_ENV=production
+PORT=9000
 JWT_SECRET=kst-super-secret-jwt-2024-change-me
 COOKIE_SECRET=kst-super-cookie-secret-2024-change-me
 STORE_CORS=https://medusa-starter-default-production-ec61.up.railway.app
@@ -111,6 +112,16 @@ Make sure to run 'medusa build' before starting the server.
 ### Status:
 🔄 **DESPLEGANDO...** - Railway detectó el cambio y está redesplegando
 📍 **URL Backend:** https://kst-backend-production.up.railway.app
+
+## 🚨 CRITICAL: PORT Environment Variable Required
+
+**YOU MUST ADD THIS ENVIRONMENT VARIABLE IN RAILWAY:**
+
+```bash
+PORT=9000
+```
+
+**Without this, the server will start on port 8080 and Railway won't be able to connect!**
 
 ## ⚡ MEMORY FIX - Admin UI Disabled (2024-12-20 01:55)
 

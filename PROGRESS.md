@@ -272,7 +272,13 @@ MedusaJS Admin UI build requires more memory than Railway's basic plan provides.
 - Fixed by using `medusa start --port=${PORT:-9000}` directly
 
 ### Status:
-🔄 **REDEPLOYING** with correct port configuration
-📍 Railway automatically provides PORT=9000 environment variable
+� **CRITICAL ISSUE FOUND** - Server still starting on port 8080!
+📍 **ROOT CAUSE**: Railway does NOT automatically provide PORT=9000
+📍 **SOLUTION**: Must manually add `PORT=9000` environment variable in Railway
 
-**Backend deployment in progress with port fix! 🚀**
+### Action Required:
+1. **Add `PORT=9000` in Railway Variables** (CRITICAL!)
+2. **Add `DISABLE_MEDUSA_ADMIN=true` in Railway Variables** 
+3. **Redeploy** after adding both variables
+
+**Backend will work once PORT=9000 is added to Railway environment! 🚀**
