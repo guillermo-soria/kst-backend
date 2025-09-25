@@ -90,6 +90,8 @@ const config = {
     disable: adminDisable, // fallback para versiones que miran 'disable'
   },
   modules: {
+    // Módulo de productos (requerido para seed y endpoints de productos)
+    product: { resolve: "@medusajs/product" },
     ...redisModules,
   },
   // plugins: []
