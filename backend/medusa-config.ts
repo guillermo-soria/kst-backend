@@ -22,6 +22,15 @@ if (!useRedis) {
   if (process.env.NODE_ENV === "production") {
     console.warn("[medusa-config] REDIS_URL no definido. Desactivando módulos Redis (eventBus/cache)")
   }
+} else if (process.env.NODE_ENV === "production") {
+  // Log seguro (no exponer password) para confirmar que la var llegó al runtime.
+  try {
+    const u = new URL(process.env.REDIS_URL as string)
+    if (u.password) u.password = "***"
+    console.log("[medusa-config] REDIS_URL detectada ->", `${u.protocol}//${u.username ? u.username + '@' : ''}${u.host}${u.pathname}`)
+  } catch {
+    console.log("[medusa-config] REDIS_URL presente pero no parseable")
+  }
 }
 
 // Opción A: eliminar workflows temporalmente (causaba crash)
@@ -29,16 +38,18 @@ const redisModules = useRedis
   ? {
       eventBus: {
         resolve: "@medusajs/event-bus-redis",
-        options: { redis: { url: process.env.REDIS_URL } },
+        // Medusa v2 espera `redisUrl` plano en options
+        options: { redisUrl: process.env.REDIS_URL },
       },
       cache: {
         resolve: "@medusajs/cache-redis",
-        options: { redis: { url: process.env.REDIS_URL } },
+        // Igual que arriba: usar redisUrl directo (el error mostraba que no lo encontraba)
+        options: { redisUrl: process.env.REDIS_URL },
       },
       // workflows removido temporalmente. Para reactivar:
       // workflows: {
       //   resolve: "@medusajs/workflow-engine-redis",
-      //   options: { redisUrl: process.env.REDIS_URL }, // probar con redisUrl en vez de objeto nested
+      //   options: { redisUrl: process.env.REDIS_URL },
       // },
     }
   : {}
@@ -46,7 +57,7 @@ const redisModules = useRedis
 const config = {
   projectConfig: {
     databaseUrl: process.env.DATABASE_URL,
-    redisUrl: process.env.REDIS_URL,
+    redisUrl: process.env.REDIS_URL, // requerido por EventBus redis
     // Ajustá CORS desde env si ya tenés frontend/admin separados
     http: {
       storeCors: parseCors(STORE_CORS_ENV),
