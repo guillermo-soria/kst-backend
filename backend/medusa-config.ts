@@ -115,61 +115,46 @@ if (wantSqlite) {
   console.log('[medusa-config] Using SQLite test DB at', sqliteFile)
 }
 
+// Flag para habilitar admin legacy 7.x (riesgo de incompatibilidad con core 2.x)
+const enableLegacyAdmin = boolFromEnv(process.env.ENABLE_LEGACY_ADMIN, false)
+if (enableLegacyAdmin) {
+  try {
+    // Log de resolución del paquete y advertencia de ruta
+    const adminPkg = require.resolve("@medusajs/admin/package.json")
+    console.log("[medusa-config] Legacy admin habilitado. Paquete resuelto en:", adminPkg)
+    console.log("[medusa-config] El legacy admin normalmente se sirve en /app. Si obtienes 404 es probable que la integración no sea compatible con @medusajs/medusa 2.x.")
+  } catch (e: any) {
+    console.warn('[medusa-config] No se pudo resolver @medusajs/admin:', e?.message)
+  }
+}
+
 const config = {
   projectConfig: {
     databaseUrl: wantSqlite ? undefined : process.env.DATABASE_URL,
-    // Si estamos en modo SQLite test añadimos databaseType + driverOptions
-    ...(global as any).__MEDUSA_TEST_SQLITE__ ? {
-      databaseType: 'sqlite',
-      databaseDriverOptions: {
-        connection: { filename: (global as any).__MEDUSA_TEST_SQLITE__ }
-      }
-    } : {},
-    redisUrl: process.env.REDIS_URL, // requerido por EventBus redis
-    // Ajustá CORS desde env si ya tenés frontend/admin separados
-    http: {
-      storeCors: parseCors(STORE_CORS_ENV),
-      adminCors: parseCors(ADMIN_CORS_ENV),
-      authCors: parseCors(AUTH_CORS_ENV),
-    },
-    auth: {
-      jwtSecret: process.env.JWT_SECRET,
-      cookieSecret: process.env.COOKIE_SECRET,
-      sessionOptions: {},
-    },
+    ...(global as any).__MEDUSA_TEST_SQLITE__ ? { databaseType: 'sqlite', databaseDriverOptions: { connection: { filename: (global as any).__MEDUSA_TEST_SQLITE__ } } } : {},
+    redisUrl: process.env.REDIS_URL,
+    http: { storeCors: parseCors(STORE_CORS_ENV), adminCors: parseCors(ADMIN_CORS_ENV), authCors: parseCors(AUTH_CORS_ENV) },
+    auth: { jwtSecret: process.env.JWT_SECRET, cookieSecret: process.env.COOKIE_SECRET, sessionOptions: {} },
   },
-  admin: {
-    serve: adminServe, // usado por versiones recientes
-    disable: adminDisable, // fallback para versiones que miran 'disable'
-  },
+  admin: { serve: adminServe, disable: adminDisable },
   modules: {
     // Auth + Users
-    user: {
-      resolve: "@medusajs/user",
-      options: {
-        jwtSecret: process.env.USER_JWT_SECRET || process.env.JWT_SECRET,
-        jwt_secret: process.env.USER_JWT_SECRET || process.env.JWT_SECRET, // alias requerido
-      },
-    },
-    auth: {
-      resolve: "@medusajs/auth",
-      options: {
-        jwtSecret: process.env.AUTH_JWT_SECRET || process.env.JWT_SECRET,
-        jwt_secret: process.env.AUTH_JWT_SECRET || process.env.JWT_SECRET,
-        providers: [
-          {
-            resolve: "@medusajs/auth-emailpass",
-            id: "emailpass",
-            options: {},
-          },
-        ],
-      },
-    },
+    user: { resolve: "@medusajs/user", options: { jwtSecret: process.env.USER_JWT_SECRET || process.env.JWT_SECRET, jwt_secret: process.env.USER_JWT_SECRET || process.env.JWT_SECRET } },
+    auth: { resolve: "@medusajs/auth", options: { jwtSecret: process.env.AUTH_JWT_SECRET || process.env.JWT_SECRET, jwt_secret: process.env.AUTH_JWT_SECRET || process.env.JWT_SECRET, providers: [{ resolve: "@medusajs/auth-emailpass", id: "emailpass", options: {} }] } },
     // Módulo de productos (requerido para seed y endpoints de productos)
     product: { resolve: "@medusajs/product" },
     ...redisModules,
   },
-  plugins: [],
+  plugins: [
+    // Admin legacy sólo si se habilita explícitamente
+    enableLegacyAdmin ? {
+      resolve: "@medusajs/admin",
+      options: {
+        // Removido 'path' porque no controla la URL pública en el legacy admin
+        autoRebuild: boolFromEnv(process.env.LEGACY_ADMIN_AUTOREBUILD, true)
+      }
+    } : null,
+  ].filter(Boolean),
 }
 
 export default config

@@ -39,3 +39,7 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Custom admin panel (descartado)
+src/app/admin/
+src/lib/admin.ts

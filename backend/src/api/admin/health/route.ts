@@ -9,6 +9,7 @@ export const GET = (req: MedusaRequest, res: MedusaResponse) => {
     message: "KST Admin API is healthy", 
     timestamp: new Date().toISOString(),
     environment: process.env.NODE_ENV || "development",
-    version: process.env.npm_package_version || "unknown"
+    version: process.env.npm_package_version || "unknown",
+    panel: "custom-external-v2"
   })
 }

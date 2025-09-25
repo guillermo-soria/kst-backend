@@ -32,6 +32,7 @@
     "medusa": "medusa"
   },
   "dependencies": {
+    "@medusajs/admin": "^7.1.18",
     "@medusajs/admin-sdk": "2.10.3",
     "@medusajs/auth": "^2.10.3",
     "@medusajs/auth-emailpass": "^2.10.3",
@@ -49,6 +50,7 @@
     "@mikro-orm/postgresql": "6.4.3",
     "awilix": "^8.0.1",
     "bcryptjs": "^3.0.2",
+    "c": "^1.1.1",
     "ioredis": "^5.8.0",
     "node-fetch": "^2.7.0",
     "pg": "^8.16.3"
