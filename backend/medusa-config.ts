@@ -54,6 +54,18 @@ const redisModules = useRedis
     }
   : {}
 
+// ---------------- Admin embebido ----------------
+// Forzamos desactivado por defecto para evitar crash si no existe build.
+// Se puede reactivar seteando FORCE_ENABLE_ADMIN=true y proveyendo build.
+const forceEnableAdmin = boolFromEnv(process.env.FORCE_ENABLE_ADMIN, false)
+const disableAdminFlag = boolFromEnv(process.env.DISABLE_MEDUSA_ADMIN, true) // default true
+const adminServe = forceEnableAdmin && !disableAdminFlag
+console.log(
+  "[medusa-config] admin.serve=", adminServe,
+  "FORCE_ENABLE_ADMIN=", process.env.FORCE_ENABLE_ADMIN,
+  "DISABLE_MEDUSA_ADMIN=", process.env.DISABLE_MEDUSA_ADMIN
+)
+
 const config = {
   projectConfig: {
     databaseUrl: process.env.DATABASE_URL,
@@ -63,37 +75,21 @@ const config = {
       storeCors: parseCors(STORE_CORS_ENV),
       adminCors: parseCors(ADMIN_CORS_ENV),
       authCors: parseCors(AUTH_CORS_ENV),
-      // Podés setear HOST/PORT via env si necesitás
-      // host: process.env.HOST,
-      // port: Number(process.env.PORT) || 9000,
+      // host / port opcional
     },
-    // Secrets para cookies/JWT en prod
     auth: {
       jwtSecret: process.env.JWT_SECRET,
       cookieSecret: process.env.COOKIE_SECRET,
-      sessionOptions: {
-        // en prod, respaldado por redis (evita MemoryStore)
-        // si usás @medusajs/cache-redis / session-store via redis, se configura por plugin
-      },
+      sessionOptions: {},
     },
   },
-
-  // 🔒 Desactivar servir el Admin embebido por default.
-  // Podés reactivarlo seteando DISABLE_MEDUSA_ADMIN=false
   admin: {
-    // In Medusa v2, prefer using `serve` to control embedded admin serving
-    serve: !boolFromEnv(process.env.DISABLE_MEDUSA_ADMIN, true),
+    serve: adminServe,
   },
-
-  // Medusa v2 modules (Redis-backed) para estabilidad en producción (condicionales)
   modules: {
     ...redisModules,
   },
-
-  // Si tenés plugins, los mantenés acá (no necesario en v2 para módulos base).
-  // plugins: [
-  //   { resolve: "@medusajs/auth-emailpass", options: {} },
-  // ],
+  // plugins: []
 }
 
 export default config
