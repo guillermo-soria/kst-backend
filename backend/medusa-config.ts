@@ -65,6 +65,8 @@ console.log(
   "FORCE_ENABLE_ADMIN=", process.env.FORCE_ENABLE_ADMIN,
   "DISABLE_MEDUSA_ADMIN=", process.env.DISABLE_MEDUSA_ADMIN
 )
+// Añadimos propiedad disable explícita (algunas versiones la usan en vez de serve)
+const adminDisable = !adminServe
 
 const config = {
   projectConfig: {
@@ -84,7 +86,8 @@ const config = {
     },
   },
   admin: {
-    serve: adminServe,
+    serve: adminServe, // usado por versiones recientes
+    disable: adminDisable, // fallback para versiones que miran 'disable'
   },
   modules: {
     ...redisModules,
